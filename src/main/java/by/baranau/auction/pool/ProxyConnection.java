@@ -19,6 +19,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 
+import by.baranau.auction.exception.DatabaseLogicalException;
+
 public class ProxyConnection implements Connection {
 	
 	private Connection connection;
@@ -39,8 +41,12 @@ public class ProxyConnection implements Connection {
 		ConnectionPool.getInstance().closeConnection(this);
 	}
 	
-	void closeConnection() throws SQLException { //TODO myexception
-		connection.close();
+	void closeConnection() throws DatabaseLogicalException {
+		try {
+			connection.close();
+		} catch (SQLException e) {
+			throw new DatabaseLogicalException(e);
+		}
 	}
 
 	public void commit() throws SQLException {
@@ -71,16 +77,20 @@ public class ProxyConnection implements Connection {
 		return connection.createStatement();
 	}
 
-	public Statement createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability)
-			throws SQLException {
-		return connection.createStatement(resultSetType, resultSetConcurrency, resultSetHoldability);
+	public Statement createStatement(
+			int resultSetType, int resultSetConcurrency, int resultSetHoldability)
+					throws SQLException {
+		return connection.createStatement(
+				resultSetType, resultSetConcurrency, resultSetHoldability);
 	}
 
-	public Statement createStatement(int resultSetType, int resultSetConcurrency) throws SQLException {
+	public Statement createStatement(int resultSetType, int resultSetConcurrency) 
+			throws SQLException {
 		return connection.createStatement(resultSetType, resultSetConcurrency);
 	}
 
-	public Struct createStruct(String typeName, Object[] attributes) throws SQLException {
+	public Struct createStruct(String typeName, Object[] attributes) 
+			throws SQLException {
 		return connection.createStruct(typeName, attributes);
 	}
 
@@ -150,10 +160,12 @@ public class ProxyConnection implements Connection {
 
 	public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency,
 			int resultSetHoldability) throws SQLException {
-		return connection.prepareCall(sql, resultSetType, resultSetConcurrency, resultSetHoldability);
+		return connection.prepareCall(
+				sql, resultSetType, resultSetConcurrency, resultSetHoldability);
 	}
 
-	public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
+	public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency)
+			throws SQLException {
 		return connection.prepareCall(sql, resultSetType, resultSetConcurrency);
 	}
 
@@ -161,13 +173,14 @@ public class ProxyConnection implements Connection {
 		return connection.prepareCall(sql);
 	}
 
-	public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency,
-			int resultSetHoldability) throws SQLException {
-		return connection.prepareStatement(sql, resultSetType, resultSetConcurrency, resultSetHoldability);
+	public PreparedStatement prepareStatement(String sql, int resultSetType, 
+			int resultSetConcurrency, int resultSetHoldability) throws SQLException {
+		return connection.prepareStatement(
+				sql, resultSetType, resultSetConcurrency, resultSetHoldability);
 	}
 
-	public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency)
-			throws SQLException {
+	public PreparedStatement prepareStatement(String sql, int resultSetType, 
+			int resultSetConcurrency) throws SQLException {
 		return connection.prepareStatement(sql, resultSetType, resultSetConcurrency);
 	}
 
