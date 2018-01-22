@@ -1,17 +1,16 @@
 package by.baranau.auction.logic;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
+import by.baranau.auction.exception.ConnectionPoolInterruptedException;
 import by.baranau.auction.pool.ConnectionPool;
 import by.baranau.auction.pool.ProxyConnection;
 
 public class LoginLogic {
 	private final static String SQL_SELECT_CLIENT_LOGIN = 
-			"SELECT P_EMAIL, P_PASSWORD FROM PASSWORDS WHEERE P_EMAIL=?";
+			"SELECT C_LOGIN, C_PASSWORD FROM CLIENT_PASSWORDS WHEERE C_LOGIN=?";
 	
 	private ConnectionPool connectionPool;
 	
@@ -23,7 +22,7 @@ public class LoginLogic {
 		ProxyConnection cn = null;
 		PreparedStatement st = null;
 		
-		String email = null;
+		String login = null;
 		String password = null;
 		
 		try {
@@ -32,19 +31,19 @@ public class LoginLogic {
 			st.setString(1, enterLogin);
 			ResultSet resultSet = st.executeQuery();
 			resultSet.next();
-			email = resultSet.getString(1);
+			login = resultSet.getString(1);
 			password = resultSet.getString(2);
 		} catch (SQLException e) {
 			//TODO
-		} catch (InterruptedException e) {
+		} catch (ConnectionPoolInterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 			connectionPool.closeConnection(cn);
 		}
-		if (email == null || password == null) {
+		if (login == null || password == null) {
 			return false;
 		}
-		return email.equals(enterLogin) && password.equals(enterPassword);
+		return login.equals(enterLogin) && password.equals(enterPassword);
 	}
 }

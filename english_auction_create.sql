@@ -12,14 +12,6 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 -- Schema english_auction
 -- -----------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS `english_auction` DEFAULT CHARACTER SET utf8 ;
--- -----------------------------------------------------
--- Schema user_access_data
--- -----------------------------------------------------
-
--- -----------------------------------------------------
--- Schema user_access_data
--- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `user_access_data` ;
 USE `english_auction` ;
 
 -- -----------------------------------------------------
@@ -116,16 +108,26 @@ CREATE TABLE IF NOT EXISTS `english_auction`.`lots_has_auctions` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-USE `user_access_data` ;
 
 -- -----------------------------------------------------
--- Table `user_access_data`.`passwords`
+-- Table `english_auction`.`client_passwords`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `user_access_data`.`passwords` (
-  `p_email` VARCHAR(64) NOT NULL COMMENT 'User email and login',
-  `p_password` VARCHAR(40) NOT NULL COMMENT 'Password hash code',
-  PRIMARY KEY (`p_email`),
-  UNIQUE INDEX `email_UNIQUE` (`p_email` ASC))
+CREATE TABLE IF NOT EXISTS `english_auction`.`client_passwords` (
+  `c_login` VARCHAR(64) NOT NULL,
+  `c_password` VARCHAR(64) NOT NULL,
+  PRIMARY KEY (`c_login`),
+  UNIQUE INDEX `c_login_UNIQUE` (`c_login` ASC))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `english_auction`.`admin_passwords`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `english_auction`.`admin_passwords` (
+  `a_login` VARCHAR(64) NOT NULL,
+  `a_password` VARCHAR(64) NOT NULL,
+  PRIMARY KEY (`a_login`),
+  UNIQUE INDEX `admin_passwordscol_UNIQUE` (`a_login` ASC))
 ENGINE = InnoDB;
 
 
