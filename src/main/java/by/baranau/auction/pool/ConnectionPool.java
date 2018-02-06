@@ -1,5 +1,6 @@
 package by.baranau.auction.pool;
 
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
@@ -41,24 +42,24 @@ public class ConnectionPool {
 		try {
 			DriverManager.registerDriver(new com.mysql.jdbc.Driver());
 			for (int i = 0; i < POOL_SIZE; i++) {
-				ProxyConnection connection = (ProxyConnection) DriverManager.getConnection(
+				Connection connection = DriverManager.getConnection(
 						databaseUrl, 
 						databaseUser,
 						databasePassword);
-				connectionQueue.offer(connection);
+				connectionQueue.offer(new ProxyConnection(connection));
 			}
 		} catch (SQLException e) {
 			//TODO
-			throw new RuntimeException();
+			throw new RuntimeException(e);
 		}	
 	}
 	
-	public ProxyConnection getConnection() throws ConnectionPoolInterruptedException{
+	public ProxyConnection getConnection() {
 		ProxyConnection connection = null;
 		try {
 			connection = connectionQueue.take();
 		} catch (InterruptedException e) {
-			throw new ConnectionPoolInterruptedException(e);
+			//log
 		}
 	    return connection;
 	}
@@ -97,7 +98,7 @@ public class ConnectionPool {
 	}
 	
 	@Override
-	public Object clone() throws CloneNotSupportedException {
+	protected Object clone() throws CloneNotSupportedException {
 		if (instance != null) {
 			throw new CloneNotSupportedException();
 		}

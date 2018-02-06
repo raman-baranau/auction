@@ -4,6 +4,7 @@
 		<title>Login</title>
 	</head>
 	<body>
+	
 		<form name="loginForm" method="POST" action="controller">
 			<input type="hidden" name="command" value="login" />
 			Login:<br/>
@@ -11,6 +12,7 @@
 			<br/>Password:<br/>
 			<input type="password" name="password" value=""/>
 			<br/>
+			<a href="jsp/register.jsp">Not registered yet? Register now!</a>
    			${errorLoginPassMessage}
 			<br/>
 			 ${wrongAction}
