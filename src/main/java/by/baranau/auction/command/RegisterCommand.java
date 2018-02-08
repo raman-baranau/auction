@@ -10,11 +10,11 @@ public class RegisterCommand implements ActionCommand{
 	
 	private static final String PARAM_NAME_LOGIN = "login";
 	private static final String PARAM_NAME_PASSWORD = "password";
-	private static final String PARAM_NAME_CONFIRMED_PASSWORD = "confirmed_password";
-	private static final String PARAM_NAME_FIRST_NAME = "first_name";
-	private static final String PARAM_NAME_LAST_NAME = "last_name";
-	private static final String PARAM_NAME_EMAIL = "client_email";
-	private static final String PARAM_NAME_PHONE_NUMBER = "phone_number";
+	private static final String PARAM_NAME_CONFIRMED_PASSWORD = "confirmedPassword";
+	private static final String PARAM_NAME_FIRST_NAME = "firstName";
+	private static final String PARAM_NAME_LAST_NAME = "lastName";
+	private static final String PARAM_NAME_EMAIL = "clientEmail";
+	private static final String PARAM_NAME_PHONE_NUMBER = "phoneNumber";
 	
 	private AccountReceiver receiver = new AccountReceiver();
 	private AuctionValidator auctionValidator = new AuctionValidator();

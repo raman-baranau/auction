@@ -1,5 +1,6 @@
 package by.baranau.auction.command;
 
+import by.baranau.auction.data.UserType;
 import by.baranau.auction.helper.ConfigurationManager;
 import by.baranau.auction.helper.MessageManager;
 import by.baranau.auction.receiver.AccountReceiver;
@@ -20,6 +21,7 @@ public class LoginCommand implements ActionCommand {
 
 		if (checkResult) {
 			request.setSessionAttribute("user", login);
+			request.setSessionAttribute("role", UserType.CLIENT.toString());
 			page = ConfigurationManager.getProperty("path.page.main");
 		} else  {
 			request.setRequestAttribute("errorLoginPassMessage",

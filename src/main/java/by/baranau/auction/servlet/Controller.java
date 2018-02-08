@@ -47,6 +47,7 @@ public class Controller extends HttpServlet {
 		if (command != null) {
 			page = command.execute(content);
 			if (page != null) {
+				content.insertValues(request);
 				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);
 				dispatcher.forward(request, response);
 			} else  {
