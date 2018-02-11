@@ -16,8 +16,8 @@ public class Auction extends Entity {
 	private LocalDateTime endDate;
 	private double initialPrice;
 	private double sellingPrice;
-	private int clientId;
-	private int ownerId;
+	private User client;
+	private User owner;
 	private AuctionType auctionType;
 	
 	public int getId() {
@@ -62,19 +62,19 @@ public class Auction extends Entity {
 	public void setSellingPrice(double sellingPrice) {
 		this.sellingPrice = sellingPrice;
 	}
-	public int getClientId() {
-		return clientId;
-	}
-	public void setClientId(int clientId) {
-		this.clientId = clientId;
-	}
-	public int getOwnerId() {
-		return ownerId;
-	}
-	public void setOwnerId(int ownerId) {
-		this.ownerId = ownerId;
-	}
-	public AuctionType getAuctionType() {
+	public User getClient() {
+        return client;
+    }
+    public void setClient(User client) {
+        this.client = client;
+    }
+    public User getOwner() {
+        return owner;
+    }
+    public void setOwner(User owner) {
+        this.owner = owner;
+    }
+    public AuctionType getAuctionType() {
 		return auctionType;
 	}
 	public void setAuctionType(AuctionType auctionType) {

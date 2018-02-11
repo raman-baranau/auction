@@ -12,11 +12,13 @@ public class SessionRequestContent {
 	private HashMap<String, String[]> requestParameters;
 	private HashMap<String, Object> requestAttributes;
 	private HashMap<String, Object> sessionAttributes;
+	private HttpSession session;
 	
 	public SessionRequestContent(HttpServletRequest request) {
 		requestParameters = new HashMap<String, String[]>();
 		requestAttributes = new HashMap<String, Object>();
 		sessionAttributes = new HashMap<String, Object>();
+		session = request.getSession();
 		extractValues(request);
 	}
 
@@ -58,7 +60,11 @@ public class SessionRequestContent {
 		requestParameters.clear();
 		sessionAttributes.clear();
 	}
-
+	
+	public void invalidateSession(){
+		session.invalidate();
+	}
+	
 	public String[] getParameter(String key) {
 		String[] value = requestParameters.get(key);
 		requestParameters.remove(key);

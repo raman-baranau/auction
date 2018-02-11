@@ -15,7 +15,7 @@ import by.baranau.auction.command.factory.ActionFactory;
 import by.baranau.auction.helper.ConfigurationManager;
 import by.baranau.auction.helper.MessageManager;
 
-@WebServlet("/controller")
+@WebServlet("/jsp/controller")
 public class Controller extends HttpServlet {
 	
 	/**

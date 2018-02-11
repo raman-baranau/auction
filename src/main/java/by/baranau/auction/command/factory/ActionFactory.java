@@ -8,7 +8,15 @@ public class ActionFactory {
 	
 	public ActionCommand defineCommand(SessionRequestContent request) {
 		ActionCommand current = null;
-		String action = request.getParameter("command")[0];
+		String action = null;
+		String[] param = request.getParameter("command");
+		
+		if (param != null){
+			action = param[0];
+		} else {
+			return current;
+		}
+		
 		if (action == null || action.isEmpty()) {
 			return current;
 		}

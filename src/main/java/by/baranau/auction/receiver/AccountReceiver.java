@@ -6,12 +6,12 @@ import by.baranau.auction.pool.ConnectionPool;
 
 public class AccountReceiver {
 	
-	public boolean checkLogin(String enteredLogin, String enteredPassword) {
+	public User findUserByCredentials(String enteredLogin, String enteredPassword) {
 		UserDAO userDao = new UserDAO(ConnectionPool.getInstance().getConnection());
 		//TODO logic must be here
-		boolean result = userDao.checkLogin(enteredLogin, enteredPassword);
+		User user = userDao.findUserByCredentials(enteredLogin, enteredPassword);
 		userDao.closeConnection();
-		return result;
+		return user;
 	}
 	
 	public boolean userExists(String login) {

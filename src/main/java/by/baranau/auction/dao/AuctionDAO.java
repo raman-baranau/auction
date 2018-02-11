@@ -11,6 +11,7 @@ import java.util.List;
 
 import by.baranau.auction.data.Auction;
 import by.baranau.auction.data.AuctionType;
+import by.baranau.auction.data.User;
 import by.baranau.auction.pool.ConnectionPool;
 import by.baranau.auction.pool.ProxyConnection;
 
@@ -23,7 +24,10 @@ public class AuctionDAO extends AbstractDAO<Integer, Auction> {
 			"DELETE FROM AUCTIONS WHERE AUCTION_ID=?";
 	
 	private static final String SQL_FIND_AUCTION_BY_ID =
-			"SELECT FROM AUCTIONS WHERE AUCTION_ID=?";
+			"SELECT AUCTION_ID, LOT_NAME, LOT_DESCRIPTION, START_DATE, END_DATE, "
+			+ "INITIAL_PRICE, SELLING_PRICE, CLIENT_ID, OWNER_ID, AUCTION_TYPE "
+			+ "FROM AUCTIONS "
+			+ "WHERE AUCTION_ID=?";
 	
 	private static final String SQL_FIND_ALL_AUCTIONS =
 			"SELECT AUCTION_ID, LOT_NAME, LOT_DESCRIPTION, START_DATE, END_DATE, "
@@ -31,8 +35,11 @@ public class AuctionDAO extends AbstractDAO<Integer, Auction> {
 	
 	private ProxyConnection connection;
 	
+	private UserDAO userDao;
+	
 	public AuctionDAO(ProxyConnection connection) {
 		this.connection = connection;
+		userDao = new UserDAO(connection);
 	}
 	
 	@Override
@@ -48,14 +55,22 @@ public class AuctionDAO extends AbstractDAO<Integer, Auction> {
 				auction.setId(resultSet.getInt(1));
 				auction.setLotName(resultSet.getString(2));
 				auction.setLotDescription(resultSet.getString(3));
-				auction.setStartDate(LocalDateTime.ofInstant(resultSet.getDate(4).toInstant(),
+				auction.setStartDate(LocalDateTime.ofInstant(resultSet.getTimestamp(4).toInstant(),
 						ZoneId.systemDefault()));
-				auction.setEndDate(LocalDateTime.ofInstant(resultSet.getDate(5).toInstant(),
+				auction.setEndDate(LocalDateTime.ofInstant(resultSet.getTimestamp(5).toInstant(),
 						ZoneId.systemDefault()));
 				auction.setInitialPrice(resultSet.getDouble(6));
 				auction.setSellingPrice(resultSet.getDouble(7));
-				auction.setClientId(resultSet.getInt(8));
-				auction.setOwnerId(resultSet.getInt(9));
+				
+				int entityId = resultSet.getInt(8);
+				User client = null;
+				if (entityId != 0) {
+				    client = userDao.findEntityById(resultSet.getInt(8));
+				}				
+				auction.setClient(client);
+				
+				User owner = userDao.findEntityById(resultSet.getInt(9));
+				auction.setOwner(owner);
 				auction.setAuctionType(AuctionType.valueOf(resultSet.getString(10)));
 				auctions.add(auction);
 			}
@@ -87,14 +102,21 @@ public class AuctionDAO extends AbstractDAO<Integer, Auction> {
 			auction.setId(resultSet.getInt(1));
 			auction.setLotName(resultSet.getString(2));
 			auction.setLotDescription(resultSet.getString(3));
-			auction.setStartDate(LocalDateTime.ofInstant(resultSet.getDate(4).toInstant(),
-					ZoneId.systemDefault()));
-			auction.setEndDate(LocalDateTime.ofInstant(resultSet.getDate(5).toInstant(),
-					ZoneId.systemDefault()));
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
+			auction.setStartDate(LocalDateTime.parse(resultSet.getString(4), dtf));
+			auction.setEndDate(LocalDateTime.parse(resultSet.getString(5), dtf));
 			auction.setInitialPrice(resultSet.getDouble(6));
 			auction.setSellingPrice(resultSet.getDouble(7));
-			auction.setClientId(resultSet.getInt(8));
-			auction.setOwnerId(resultSet.getInt(9));
+			
+			int entityId = resultSet.getInt(8);
+            User client = null;
+            if (entityId != 0) {
+                client = userDao.findEntityById(resultSet.getInt(8));
+            }               
+			
+            auction.setClient(client);
+            User owner = userDao.findEntityById(resultSet.getInt(9));
+            auction.setOwner(owner);
 			auction.setAuctionType(AuctionType.valueOf(resultSet.getString(10)));
 		} catch (SQLException e) {
 			
@@ -118,6 +140,7 @@ public class AuctionDAO extends AbstractDAO<Integer, Auction> {
 			st = connection.prepareStatement(SQL_DELETE_AUCTION);
 			st.setInt(1, id);
 			result = st.execute();
+			result = true;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -129,7 +152,6 @@ public class AuctionDAO extends AbstractDAO<Integer, Auction> {
 				e.printStackTrace();
 			}
 		}
-		
 		return result;
 	}
 
@@ -151,8 +173,8 @@ public class AuctionDAO extends AbstractDAO<Integer, Auction> {
 			st.setString(3, entity.getStartDate().format(formatter));
 			st.setString(4, entity.getEndDate().format(formatter));
 			st.setDouble(5, entity.getInitialPrice());
-			st.setInt(6, entity.getOwnerId());
-			st.setInt(7, entity.getAuctionType().ordinal() + 1);
+			st.setInt(6, entity.getOwner().getId());
+			st.setString(7, entity.getAuctionType().toString());
 			st.execute();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

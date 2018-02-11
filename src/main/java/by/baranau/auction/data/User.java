@@ -7,12 +7,22 @@ public class User extends Entity {
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	private int id;
 	private String login;
-	private String password;
+	private byte[] password;
 	private String firstName;
 	private String lastName;
 	private String email;
 	private String phoneNumber;
+	private UserType userType;
+	
+	public int getId() {
+	    return id;
+	}
+	
+	public void setId(int id) {
+	    this.id = id;
+	}
 	
 	public String getLogin() {
 		return login;
@@ -22,12 +32,12 @@ public class User extends Entity {
 		this.login = login;
 	}
 	
-	public String getPassword() {
+	public byte[] getPassword() {
 		return password;
 	}
 	
 	public void setPassword(String password) {
-		this.password = password;
+		this.password = password.getBytes();
 	}
 
 	public String getFirstName() {
@@ -61,4 +71,12 @@ public class User extends Entity {
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
+
+    public UserType getUserType() {
+        return userType;
+    }
+
+    public void setUserType(UserType userType) {
+        this.userType = userType;
+    }
 }

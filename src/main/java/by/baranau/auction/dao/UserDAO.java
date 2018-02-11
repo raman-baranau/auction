@@ -15,7 +15,9 @@ import by.baranau.auction.pool.ProxyConnection;
 public class UserDAO extends AbstractDAO <Integer, User> {
 	
 	private final static String SQL_SELECT_CLIENT_PASSWORD = 
-			"SELECT C_PASSWORD FROM CLIENTS WHERE C_LOGIN=?";
+			"SELECT CLIENT_ID, FIRST_NAME, LAST_NAME, C_LOGIN,"
+			+ "C_PASSWORD, C_EMAIL, C_PHONE_NUMBER, USER_TYPE"
+			+ " FROM CLIENTS WHERE C_LOGIN=?";
 
 	private final static String SQL_USER_EXISTS =
 			"SELECT C_LOGIN FROM CLIENTS WHERE C_LOGIN=?";
@@ -24,6 +26,30 @@ public class UserDAO extends AbstractDAO <Integer, User> {
 			"INSERT INTO CLIENTS(CLIENT_ID, FIRST_NAME, LAST_NAME, C_LOGIN,"
 			+ "C_PASSWORD, C_EMAIL, C_PHONE_NUMBER, USER_TYPE)"
 			+ "VALUES (null, ?, ?, ?, ?, ?, ?, ?)";
+	
+	private final static String SQL_FIND_USER_BY_ID =
+	        "SELECT CLIENT_ID, FIRST_NAME, LAST_NAME, C_LOGIN, "
+	        + "C_PASSWORD, C_EMAIL, C_PHONE_NUMBER, USER_TYPE "
+	        + "FROM CLIENTS "
+	        + "WHERE CLIENT_ID=?";
+	
+	private final static String FIELD_CLIENT_ID =
+	        "CLIENT_ID";
+	private final static String FIELD_FIRST_NAME =
+            "FIRST_NAME";
+	private final static String FIELD_LAST_NAME =
+	        "LAST_NAME";
+	private final static String FIELD_LOGIN =
+	        "C_LOGIN";
+	private final static String FIELD_PASSWORD =
+	        "C_PASSWORD";
+	private final static String FIELD_EMAIL =
+	        "C_EMAIL";
+	private final static String FIELD_PHONE_NUMBER =
+	        "C_PHONE_NUMBER";
+	private final static String FIELD_USER_TYPE =
+	        "USER_TYPE";
+	        
 	
 	private ProxyConnection connection;
 	
@@ -38,8 +64,30 @@ public class UserDAO extends AbstractDAO <Integer, User> {
 
 	@Override
 	public User findEntityById(Integer id) {
-		// TODO Auto-generated method stub
-		return null;
+		PreparedStatement statement = null;
+		User user = null;
+		
+		try {
+		    statement = connection.prepareStatement(SQL_FIND_USER_BY_ID);
+		    statement.setInt(1, id);
+		    ResultSet result = statement.executeQuery();
+		    result.next();
+		    user = new User();
+		    user.setId(result.getInt(FIELD_CLIENT_ID));
+		    user.setFirstName(result.getString(FIELD_FIRST_NAME));
+		    user.setLastName(result.getString(FIELD_LAST_NAME));
+		    user.setLogin(result.getString(FIELD_LOGIN));
+		    user.setPassword(result.getString(FIELD_PASSWORD));
+		    user.setEmail(result.getString(FIELD_EMAIL));
+		    user.setPhoneNumber(result.getString(FIELD_PHONE_NUMBER));
+		    user.setUserType(UserType.valueOf(result.getString(FIELD_USER_TYPE)));
+		} catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } finally {
+		    
+		}
+		return user;
 	}
 
 	@Override
@@ -62,7 +110,7 @@ public class UserDAO extends AbstractDAO <Integer, User> {
 		
 		try {
 			digest = MessageDigest.getInstance("SHA-256");
-			byte[] bpasswordHash = digest.digest(entity.getPassword().getBytes());
+			byte[] bpasswordHash = digest.digest(entity.getPassword());
 			passwordHash = new String(bpasswordHash);
 			st = connection.prepareStatement(SQL_CREATE_USER);
 			st.setString(1, entity.getFirstName());
@@ -97,12 +145,20 @@ public class UserDAO extends AbstractDAO <Integer, User> {
 		return null;
 	}
 	
-	public boolean checkLogin(String enteredLogin, String enteredPassword) {
+	public User findUserByCredentials(String enteredLogin, String enteredPassword) {
 		PreparedStatement st = null;
 		
 		String passwordHash = null;
 		String enteredPasswordHash = null;
 		MessageDigest digest = null;
+		
+		int id = 0;
+		String firstName = null;
+		String lastName = null;
+		String login = null;
+		String email = null;
+		String phoneNumber = null;
+		UserType userType = UserType.GUEST;
 		
 		try {
 			digest = MessageDigest.getInstance("SHA-256");
@@ -113,7 +169,14 @@ public class UserDAO extends AbstractDAO <Integer, User> {
 			st.setString(1, enteredLogin);
 			ResultSet resultSet = st.executeQuery();
 			resultSet.next();
-			passwordHash = resultSet.getString(1);
+			id = resultSet.getInt("client_id");
+			firstName = resultSet.getString("first_name");
+			lastName = resultSet.getString("last_name");
+			login = enteredLogin;
+			email = resultSet.getString("c_email");
+			phoneNumber = resultSet.getString("c_phone_number");
+			userType = UserType.valueOf(resultSet.getString("user_type"));
+			passwordHash = resultSet.getString("c_password");
 		} catch (SQLException e) {
 			//TODO
 		} catch (NoSuchAlgorithmException e) {
@@ -127,10 +190,25 @@ public class UserDAO extends AbstractDAO <Integer, User> {
 				e.printStackTrace();
 			}
 		}
+		
 		if (passwordHash == null) {
-			return false;
+			return null;
 		}
-		return passwordHash.equals(enteredPasswordHash);
+		if ( !passwordHash.equals(enteredPasswordHash) ) {
+		    return null;
+		}
+		
+		User user = new User();
+		user.setId(id);
+		user.setFirstName(firstName);
+		user.setLastName(lastName);
+		user.setLogin(login);
+		user.setPassword(enteredPasswordHash);
+		user.setEmail(email);
+		user.setPhoneNumber(phoneNumber);
+		user.setUserType(userType);
+		
+		return user;
 	}
 	
 	public boolean userExists(String login) {

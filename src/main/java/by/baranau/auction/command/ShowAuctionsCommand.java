@@ -24,5 +24,4 @@ public class ShowAuctionsCommand implements ActionCommand {
 		
 		return page;
 	}
-
 }

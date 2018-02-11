@@ -1,5 +1,6 @@
 package by.baranau.auction.command;
 
+import by.baranau.auction.data.User;
 import by.baranau.auction.data.UserType;
 import by.baranau.auction.helper.ConfigurationManager;
 import by.baranau.auction.helper.MessageManager;
@@ -15,12 +16,11 @@ public class LoginCommand implements ActionCommand {
 		String page = null;
 		String login = request.getParameter(PARAM_NAME_LOGIN)[0];
 		String password = request.getParameter(PARAM_NAME_PASSWORD)[0];
-		Boolean checkResult = false;
 		
-		checkResult = receiver.checkLogin(login, password);
+		User targetUser = receiver.findUserByCredentials(login, password);
 
-		if (checkResult) {
-			request.setSessionAttribute("user", login);
+		if (targetUser != null) {
+			request.setSessionAttribute("user", targetUser);
 			request.setSessionAttribute("role", UserType.CLIENT.toString());
 			page = ConfigurationManager.getProperty("path.page.main");
 		} else  {
