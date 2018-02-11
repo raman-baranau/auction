@@ -1,0 +1,9 @@
+
+
+.message {
+	display: none;
+}
+
+.active-message {
+	display: block;
+}

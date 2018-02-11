@@ -1,7 +1,8 @@
 package by.baranau.auction.validator;
 
-import java.time.LocalDateTime;
 import java.util.regex.Pattern;
+
+import by.baranau.auction.data.AuctionType;
 
 public class AuctionValidator {
 	
@@ -36,7 +37,7 @@ public class AuctionValidator {
 	public final static String PATTERN_PHONE_NUMBER =
 			"";
 	
-	private final static int LOT_NAME_LENGTH = 80;
+	private final static int LOT_NAME_LENGTH = 40;
 	
 	private final static int LOT_DESCRIPTION_LENGTH = 255;
 	
@@ -50,24 +51,28 @@ public class AuctionValidator {
 				(phoneNumber == null || Pattern.matches(PATTERN_PHONE_NUMBER, phoneNumber));
 	}
 	
-	public boolean validateAuction(LocalDateTime start, LocalDateTime end, String lotName,
-			String lotDescription, String initialPrice) {
+	public boolean validateAuction(String days, String hours, String lotName,
+			String lotDescription, String initialPrice, String auctionType) {
 		double dInitialPrice = 0.;
+		int iDays = 0;
+		int iHours = 0;
 		
 		try {
 			dInitialPrice = Double.parseDouble(initialPrice);
-		} catch (NumberFormatException e) {
+			iDays = Integer.parseInt(days);
+			iHours = Integer.parseInt(hours);
+			AuctionType.valueOf(auctionType.toUpperCase());
+		} catch (IllegalArgumentException e) {
 			return false;
 		}
 		
-		return validateDate(start, end) 
-				&& lotName.length() <= LOT_NAME_LENGTH
+		return  lotName.length() <= LOT_NAME_LENGTH
 				&& lotDescription.length() <= LOT_DESCRIPTION_LENGTH
-				&& dInitialPrice > 0;
-	}
-	
-	public boolean validateDate(LocalDateTime start, LocalDateTime end) {
-		return start.isBefore(end);
+				&& dInitialPrice > 0
+				&& iDays > 0
+				&& iDays <= 14
+				&& iHours >=0
+				&& iHours < 24;
 	}
 	
 	private boolean validatePassword(String password, String confirmed_password) {

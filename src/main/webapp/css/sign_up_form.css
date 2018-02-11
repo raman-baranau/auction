@@ -2,17 +2,17 @@ body {
 	font-family: Arial;
 }
 
-* {
-	box-sizing: border-box
-}
-
 input[type=text], input[type=password] {
     width: 100%;
     padding: 15px;
-    margin: 5px 0 22px 0;
     display: inline-block;
     border: none;
     background: #f1f1f1;
+    margin: 7px 0;
+}
+
+.error {
+	margin: 0px 0;
 }
 
 input[type=text]:focus, input[type=password]:focus {
@@ -20,12 +20,12 @@ input[type=text]:focus, input[type=password]:focus {
     outline: none;
 }
 
-hr {
+.line {
     border: 1px solid #f1f1f1;
     margin-bottom: 25px;
 }
 
-button {
+.cancelbtn, .signupbtn {
     background-color: #4CAF50;
     color: white;
     padding: 14px 20px;
@@ -36,7 +36,7 @@ button {
     opacity: 0.9;
 }
 
-button:hover {
+.cancelbtn:hover, .signupbtn:hover {
     opacity:1;
 }
 
@@ -54,8 +54,6 @@ button:hover {
     padding: 0 30% 30% 30%;
 }
 
-.clearfix::after {
-    content: "";
-    clear: both;
-    display: table;
+.error, .required {
+	color: red;
 }
