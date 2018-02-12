@@ -3,6 +3,7 @@
 <html>
   <head>
     <title>Login</title>
+    <link rel="stylesheet" type="text/css" href="../css/header.css">
     <link rel="stylesheet" type="text/css" href="../css/sign_up_form.css">
   </head>
   <body>

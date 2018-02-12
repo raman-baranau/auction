@@ -39,4 +39,20 @@ public class AuctionReceiver {
 		auctionDao.closeConnection();
 		return auctions;
 	}
+	
+	public List<Auction> findAuctionsByOwnerId(int id) {
+        ProxyConnection connection = ConnectionPool.getInstance().getConnection();
+        AuctionDAO auctionDao = new AuctionDAO(connection);
+        List<Auction> auctions = auctionDao.findAuctionsByOwnerId(id);
+        auctionDao.closeConnection();
+        return auctions;
+    }
+	
+	public boolean makeBid(double bidValue, int clientId, int auctionId) {
+	    ProxyConnection connection = ConnectionPool.getInstance().getConnection();
+        AuctionDAO auctionDao = new AuctionDAO(connection);
+        boolean result = auctionDao.makeBid(bidValue, clientId, auctionId);
+        auctionDao.closeConnection();
+        return result;
+	}
 }

@@ -3,6 +3,7 @@
 <html>
   <head>
     <title>Welcome</title>
+    <link rel="stylesheet" type="text/css" href="../css/header.css">
   </head>
   <body>
 	<c:import url="/jsp/fragment/header.jsp"></c:import>

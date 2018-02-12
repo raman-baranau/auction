@@ -5,6 +5,6 @@
 		<title>Index</title>
 	</head>
 	<body>
-		<c:redirect url="/jsp/main.jsp"></c:redirect>
+		<c:redirect url="/jsp/controller?command=show_auctions"></c:redirect>
 	</body>
 </html>

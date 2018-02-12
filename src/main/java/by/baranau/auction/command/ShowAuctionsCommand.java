@@ -12,9 +12,19 @@ public class ShowAuctionsCommand implements ActionCommand {
 	private AuctionReceiver receiver = new AuctionReceiver();
 	
 	public String execute(SessionRequestContent request) {
-		List<Auction> auctions = receiver.findAuctions();
+	    
+	    String page = ConfigurationManager.getProperty("path.page.auctionlist");
+	    
+	    List<Auction> auctions = null;
+	    String[] param = request.getParameter("ownerId");
+		if (param != null) {
+		    String sId = param[0];
+            int id = Integer.parseInt(sId);
+            auctions = receiver.findAuctionsByOwnerId(id);
+        } else {
+            auctions = receiver.findAuctions();
+        }
 		
-		String page = ConfigurationManager.getProperty("path.page.auctionlist");
 		if (!auctions.isEmpty()){
 			request.setRequestAttribute("auctions", auctions);
 		} else {

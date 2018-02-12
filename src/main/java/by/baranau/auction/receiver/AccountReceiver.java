@@ -26,4 +26,18 @@ public class AccountReceiver {
 		userDao.create(user);
 		userDao.closeConnection();
 	}
+	
+	public User findUserById(int id) {
+	    UserDAO userDao = new UserDAO(ConnectionPool.getInstance().getConnection());
+        User user = userDao.findEntityById(id);
+        userDao.closeConnection();
+        return user;
+	}
+	
+	public int findLotCount(int userId) {
+	    UserDAO userDao = new UserDAO(ConnectionPool.getInstance().getConnection());
+	    int count = userDao.findLotCount(userId);
+	    userDao.closeConnection();
+	    return count;
+	}
 }

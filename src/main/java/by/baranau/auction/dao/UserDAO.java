@@ -33,6 +33,11 @@ public class UserDAO extends AbstractDAO <Integer, User> {
 	        + "FROM CLIENTS "
 	        + "WHERE CLIENT_ID=?";
 	
+	private final static String SQL_FIND_LOT_COUNT =
+	        "SELECT COUNT(AUCTION_ID) "
+	        + "FROM AUCTIONS "
+	        + "WHERE OWNER_ID=?";
+	
 	private final static String FIELD_CLIENT_ID =
 	        "CLIENT_ID";
 	private final static String FIELD_FIRST_NAME =
@@ -120,7 +125,7 @@ public class UserDAO extends AbstractDAO <Integer, User> {
 			st.setString(5, entity.getEmail());
 			st.setString(6, entity.getPhoneNumber());
 			st.setString(7, UserType.CLIENT.toString());
-			st.execute();
+			st.executeUpdate();
 		} catch (NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -234,6 +239,30 @@ public class UserDAO extends AbstractDAO <Integer, User> {
 		}
 		
 		return (result != null);
+	}
+	
+	public int findLotCount(int id) {
+	    int count = 0;
+	    PreparedStatement statement = null;
+	    
+	    try {
+	        statement = connection.prepareStatement(SQL_FIND_LOT_COUNT);
+	        statement.setInt(1, id);
+	        ResultSet result = statement.executeQuery();
+	        result.next();
+	        count = result.getInt(1);
+	    } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } finally {
+	        try {
+                statement.close();
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+	    }
+	    return count;
 	}
 	
 	public void closeConnection() {

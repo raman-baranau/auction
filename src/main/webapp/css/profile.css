@@ -1,0 +1,20 @@
+
+.container {
+	font-family: arial;
+	padding: 0 30% 30% 30%;
+}
+
+.info-block {
+	margin: 9px 0;
+}
+
+.info-value{
+  float: left;
+	width: 50%;
+	border-bottom: 1px dashed #aaa;
+}
+
+.info-name{
+  float: left;
+  width: 50%;
+}
