@@ -1,0 +1,9 @@
+.success, .fail {
+  font-size: 20px;
+  margin-bottom: 5px;
+  color: red;
+}
+
+.success {
+  color: #4CAF50;
+}

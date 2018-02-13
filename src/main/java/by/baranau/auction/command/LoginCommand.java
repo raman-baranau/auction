@@ -14,8 +14,17 @@ public class LoginCommand implements ActionCommand {
 
 	public String execute(SessionRequestContent request) {
 		String page = null;
-		String login = request.getParameter(PARAM_NAME_LOGIN)[0];
-		String password = request.getParameter(PARAM_NAME_PASSWORD)[0];
+		String[] loginBuf = request.getParameter(PARAM_NAME_LOGIN);
+		String[] passwordBuf = request.getParameter(PARAM_NAME_PASSWORD);
+		
+		if (loginBuf == null || passwordBuf == null) {
+		    request.setRequestAttribute("msgInvalidParameter", 
+                    MessageManager.getProperty("message.invalidparameter"));
+            return ConfigurationManager.getProperty("path.page.info");
+        }
+		
+		String login = loginBuf[0];
+		String password = passwordBuf[0];
 		
 		User targetUser = receiver.findUserByCredentials(login, password);
 

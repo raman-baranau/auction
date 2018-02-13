@@ -40,7 +40,8 @@ public class RegisterCommand implements ActionCommand{
 			user.setPhoneNumber(phoneNumber);
 			receiver.registerUser(user);
 			
-			page = ConfigurationManager.getProperty("path.page.verifyemail");
+			request.setSessionAttribute("user", user);
+			page = ConfigurationManager.getProperty("path.page.main");
 		} else  {
 			request.setSessionAttribute("errorRegisterMessage",
 					MessageManager.getProperty("message.incorrectinput"));

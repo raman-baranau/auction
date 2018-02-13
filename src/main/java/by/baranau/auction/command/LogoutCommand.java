@@ -8,7 +8,7 @@ public class LogoutCommand implements ActionCommand {
 	public String execute(SessionRequestContent request) {
 		String page = ConfigurationManager.getProperty("path.page.index");
 		request.setSessionAttribute("role", UserType.GUEST.toString());
-		request.setSessionAttribute("user", "");
+		request.setSessionAttribute("user", null);
 		request.invalidateSession();
 		return page;
 	}

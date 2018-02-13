@@ -4,6 +4,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -14,6 +19,8 @@ import by.baranau.auction.pool.ProxyConnection;
 
 public class UserDAO extends AbstractDAO <Integer, User> {
 	
+    private static final Logger LOGGER = LogManager.getLogger(UserDAO.class);
+    
 	private final static String SQL_SELECT_CLIENT_PASSWORD = 
 			"SELECT CLIENT_ID, FIRST_NAME, LAST_NAME, C_LOGIN,"
 			+ "C_PASSWORD, C_EMAIL, C_PHONE_NUMBER, USER_TYPE"
@@ -37,6 +44,11 @@ public class UserDAO extends AbstractDAO <Integer, User> {
 	        "SELECT COUNT(AUCTION_ID) "
 	        + "FROM AUCTIONS "
 	        + "WHERE OWNER_ID=?";
+	
+	private final static String SQL_UPDATE_USER =
+	        "UPDATE CLIENTS "
+	        + "SET C_PASSWORD=?, C_EMAIL=?, C_PHONE_NUMBER=? "
+	        + "WHERE CLIENT_ID=?";
 	
 	private final static String FIELD_CLIENT_ID =
 	        "CLIENT_ID";
@@ -87,57 +99,55 @@ public class UserDAO extends AbstractDAO <Integer, User> {
 		    user.setPhoneNumber(result.getString(FIELD_PHONE_NUMBER));
 		    user.setUserType(UserType.valueOf(result.getString(FIELD_USER_TYPE)));
 		} catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+		    LOGGER.log(Level.ERROR, "Error occured while executing query", e);
         } finally {
-		    
+		    try {
+                statement.close();
+            } catch (SQLException e) {
+                LOGGER.log(Level.ERROR, "Error occured while closing statement", e);
+            }
 		}
 		return user;
 	}
 
 	@Override
 	public boolean delete(Integer id) {
-		// TODO Auto-generated method stub
-		return false;
+		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	@Override
 	public boolean delete(User entity) {
-		// TODO Auto-generated method stub
-		return false;
+		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	@Override
 	public boolean create(User entity) {
-		PreparedStatement st = null;
+		PreparedStatement statement = null;
 		MessageDigest digest = null;
 		String passwordHash = null;
 		
 		try {
 			digest = MessageDigest.getInstance("SHA-256");
-			byte[] bpasswordHash = digest.digest(entity.getPassword());
+			byte[] bpasswordHash = digest.digest(entity.getPassword().getBytes());
 			passwordHash = new String(bpasswordHash);
-			st = connection.prepareStatement(SQL_CREATE_USER);
-			st.setString(1, entity.getFirstName());
-			st.setString(2, entity.getLastName());
-			st.setString(3, entity.getLogin());
-			st.setString(4, passwordHash);
-			st.setString(5, entity.getEmail());
-			st.setString(6, entity.getPhoneNumber());
-			st.setString(7, UserType.CLIENT.toString());
-			st.executeUpdate();
+			statement = connection.prepareStatement(SQL_CREATE_USER);
+			statement.setString(1, entity.getFirstName());
+			statement.setString(2, entity.getLastName());
+			statement.setString(3, entity.getLogin());
+			statement.setString(4, passwordHash);
+			statement.setString(5, entity.getEmail());
+			statement.setString(6, entity.getPhoneNumber());
+			statement.setString(7, UserType.CLIENT.toString());
+			statement.executeUpdate();
 		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		    LOGGER.log(Level.ERROR, "Error occured while hashing password", e);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		    LOGGER.log(Level.ERROR, "Error occured while executing query", e);
 		} finally {
 			try {
-				st.close();
+				statement.close();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			    LOGGER.log(Level.ERROR, "Error occured while closing statement", e);
 			}
 		}
 				
@@ -145,13 +155,29 @@ public class UserDAO extends AbstractDAO <Integer, User> {
 	}
 
 	@Override
-	public User update(User entity) {
-		// TODO Auto-generated method stub
-		return null;
+	public void update(User entity) {
+		PreparedStatement statement = null;
+		
+		try {
+		    statement = connection.prepareStatement(SQL_UPDATE_USER);
+		    statement.setString(1, new String(entity.getPassword()));
+		    statement.setString(2, entity.getEmail());
+		    statement.setString(3, entity.getPhoneNumber());
+		    statement.setInt(4, entity.getId());
+		    statement.executeUpdate();
+		} catch (SQLException e) {
+		    LOGGER.log(Level.ERROR, "Error occured while executing query", e);
+        } finally {
+		    try {
+                statement.close();
+            } catch (SQLException e) {
+                LOGGER.log(Level.ERROR, "Error occured while closing statement", e);
+            }
+		}
 	}
 	
 	public User findUserByCredentials(String enteredLogin, String enteredPassword) {
-		PreparedStatement st = null;
+		PreparedStatement statement = null;
 		
 		String passwordHash = null;
 		String enteredPasswordHash = null;
@@ -169,30 +195,28 @@ public class UserDAO extends AbstractDAO <Integer, User> {
 			digest = MessageDigest.getInstance("SHA-256");
 			byte[] bEnteredPasswordHash = digest.digest(enteredPassword.getBytes());
 			enteredPasswordHash = new String(bEnteredPasswordHash);
-			st = connection.prepareStatement(SQL_SELECT_CLIENT_PASSWORD);
+			statement = connection.prepareStatement(SQL_SELECT_CLIENT_PASSWORD);
 			
-			st.setString(1, enteredLogin);
-			ResultSet resultSet = st.executeQuery();
+			statement.setString(1, enteredLogin);
+			ResultSet resultSet = statement.executeQuery();
 			resultSet.next();
-			id = resultSet.getInt("client_id");
-			firstName = resultSet.getString("first_name");
-			lastName = resultSet.getString("last_name");
+			id = resultSet.getInt(FIELD_CLIENT_ID);
+			firstName = resultSet.getString(FIELD_FIRST_NAME);
+			lastName = resultSet.getString(FIELD_LAST_NAME);
 			login = enteredLogin;
-			email = resultSet.getString("c_email");
-			phoneNumber = resultSet.getString("c_phone_number");
-			userType = UserType.valueOf(resultSet.getString("user_type"));
-			passwordHash = resultSet.getString("c_password");
+			email = resultSet.getString(FIELD_EMAIL);
+			phoneNumber = resultSet.getString(FIELD_PHONE_NUMBER);
+			userType = UserType.valueOf(resultSet.getString(FIELD_USER_TYPE));
+			passwordHash = resultSet.getString(FIELD_PASSWORD);
 		} catch (SQLException e) {
-			//TODO
+		    LOGGER.log(Level.ERROR, "Error occured while executing query", e);
 		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		    LOGGER.log(Level.ERROR, "Error occured while hashing password", e);
 		} finally {
 			try {
-				st.close();
+				statement.close();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			    LOGGER.log(Level.ERROR, "Error occured while closing statement", e);
 			}
 		}
 		
@@ -217,24 +241,22 @@ public class UserDAO extends AbstractDAO <Integer, User> {
 	}
 	
 	public boolean userExists(String login) {
-		PreparedStatement st = null;
+		PreparedStatement statement = null;
 		String result = null;
 		
 		try {
-			st = connection.prepareStatement(SQL_USER_EXISTS);
-			st.setString(1, login);
-			ResultSet resultSet = st.executeQuery();
+			statement = connection.prepareStatement(SQL_USER_EXISTS);
+			statement.setString(1, login);
+			ResultSet resultSet = statement.executeQuery();
 			resultSet.next();
 			result = resultSet.getString(1);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		    LOGGER.log(Level.ERROR, "Error occured while executing query", e);
 		} finally {
 			try {
-				st.close();
+				statement.close();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			    LOGGER.log(Level.ERROR, "Error occured while closing statement", e);
 			}
 		}
 		
@@ -252,14 +274,12 @@ public class UserDAO extends AbstractDAO <Integer, User> {
 	        result.next();
 	        count = result.getInt(1);
 	    } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+	        LOGGER.log(Level.ERROR, "Error occured while executing query", e);
         } finally {
 	        try {
                 statement.close();
             } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                LOGGER.log(Level.ERROR, "Error occured while closing statement", e);
             }
 	    }
 	    return count;

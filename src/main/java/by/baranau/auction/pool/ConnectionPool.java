@@ -10,16 +10,21 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import by.baranau.auction.exception.ConnectionPoolInterruptedException;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import by.baranau.auction.exception.DatabaseLogicalException;
 
 public class ConnectionPool {
-
+    
+    private static final Logger LOGGER = LogManager.getLogger(ConnectionPool.class);
+    
 	private static ConnectionPool instance;
 	private static Lock lock = new ReentrantLock();
 	private static AtomicBoolean instanceCreated = new AtomicBoolean();
 	
-	private BlockingQueue<ProxyConnection> connectionQueue; //second TODO
+	private BlockingQueue<ProxyConnection> connectionQueue;
 	private final int POOL_SIZE;
 	
 	private ConnectionPool() {
@@ -49,8 +54,7 @@ public class ConnectionPool {
 				connectionQueue.offer(new ProxyConnection(connection));
 			}
 		} catch (SQLException e) {
-			//TODO
-			throw new RuntimeException(e);
+			throw new RuntimeException("Create connection pool error", e);
 		}	
 	}
 	
@@ -58,17 +62,19 @@ public class ConnectionPool {
 		ProxyConnection connection = null;
 		try {
 			connection = connectionQueue.take();
+			LOGGER.log(Level.INFO, "Connection has been gotten from pool");
 		} catch (InterruptedException e) {
-			//log
+		    LOGGER.log(Level.ERROR, "Connection pool error while getting connection");
 		}
 	    return connection;
 	}
 	
 	public void closeConnection(ProxyConnection connection) {
 		connectionQueue.offer(connection);
+		LOGGER.log(Level.INFO, "Connection has been returned to the pool");
 	}
 	
-	public void destroy() throws DatabaseLogicalException, ConnectionPoolInterruptedException {
+	public void destroy() {
 		try {
 			for (int i = 0; i < POOL_SIZE; i++) {
 				ProxyConnection connection = connectionQueue.take();
@@ -76,10 +82,12 @@ public class ConnectionPool {
 			}
 			DriverManager.deregisterDriver(new com.mysql.jdbc.Driver());
 		} catch (SQLException e) {
-			throw new DatabaseLogicalException(e);
+		    LOGGER.log(Level.ERROR, "Error occurred while deregistering driver", e);
 		} catch (InterruptedException e) {
-			throw new ConnectionPoolInterruptedException(e);
-		}
+		    LOGGER.log(Level.ERROR, "Release connections interrupted", e);
+		} catch (DatabaseLogicalException e) {
+		    LOGGER.log(Level.ERROR, "Error occurred while releasing connections", e);
+        }
 	}
 	
 	public static ConnectionPool getInstance() {

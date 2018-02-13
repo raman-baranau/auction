@@ -87,7 +87,6 @@ public class SessionRequestContent {
 	
 	public Object getSessionAttribute(String key) {
 		Object value = sessionAttributes.get(key);
-		sessionAttributes.remove(key);
 		return value;
 	}
 	

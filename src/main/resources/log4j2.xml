@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+  <Appenders>       
+	  <RollingFile name="roll-by-time" fileName="log/log.txt" 
+		  filePattern="log/log-%d{yyyy-MM-dd}.txt">
+	    <PatternLayout>
+        <pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss} [%t] %c{1} - %msg%n</pattern>
+	    </PatternLayout>
+	    <Policies>
+        <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+	    </Policies>
+    </RollingFile>           
+  </Appenders>
+  <Loggers>                
+    <Root level="debug">
+    	<AppenderRef ref="roll-by-time"/>
+    </Root>
+  </Loggers>
+</Configuration>

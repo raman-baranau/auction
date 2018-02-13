@@ -4,11 +4,6 @@ import java.time.LocalDateTime;
 
 public class Auction extends Entity {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
 	private int id;
 	private String lotName;
 	private String lotDescription;

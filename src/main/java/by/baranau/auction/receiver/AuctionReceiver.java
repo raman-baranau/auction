@@ -4,6 +4,8 @@ import java.util.List;
 
 import by.baranau.auction.dao.AuctionDAO;
 import by.baranau.auction.data.Auction;
+import by.baranau.auction.data.User;
+import by.baranau.auction.data.UserType;
 import by.baranau.auction.pool.ConnectionPool;
 import by.baranau.auction.pool.ProxyConnection;
 
@@ -16,10 +18,16 @@ public class AuctionReceiver {
 		auctionDao.closeConnection();
 	}
 	
-	public boolean deleteAuction(Integer auctionId) {
+	public boolean deleteAuction(Integer auctionId, User user) {
 		ProxyConnection connection = ConnectionPool.getInstance().getConnection();
 		AuctionDAO auctionDao = new AuctionDAO(connection);
-		boolean result = auctionDao.delete(auctionId);
+		boolean result = false;
+		Auction auction = auctionDao.findEntityById(auctionId);
+		if (auction.getOwner().getId() == user.getId() 
+		        || user.getUserType() == UserType.ADMIN) {
+		    result = auctionDao.delete(auction);
+		}
+		 
 		auctionDao.closeConnection();
 		return result;
 	}

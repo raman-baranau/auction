@@ -12,7 +12,7 @@ function validate() {
 	var loginRegExp = /^(?=.{8,20}$)(?![_])(?!.*[_]{2,})[a-zA-Z0-9_]+(?<![_])$/;
 	if( !loginRegExp.test(login.value) ){
 		login.focus();
-		loginError.innerHTML = "Doesn't match pattern";
+		loginError.innerHTML = "Login should be 8-20 characters long, containing latin letters, digits and underscore (not at beginning or at end)";
 		result = false;
 	}
 	
@@ -22,7 +22,7 @@ function validate() {
 	var passwordRegExp = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
 	if ( !passwordRegExp.test(password.value) ) {
 		password.focus();
-		passwordError.innerHTML = "Incorrect password";
+		passwordError.innerHTML = "Password should be at least 8 characters long, containing at least 1 lower case letter, 1 upper case letter, 1 digit and 1 special character (e.g. !@#$%^&*-)";
 		result = false;
 	}
 	
@@ -31,7 +31,7 @@ function validate() {
 	confirmedPasswordError.innerHTML = "";
 	if ( password.value != confirmedPassword.value ) {
 		confirmedPassword.focus();
-		confirmedPasswordError.innerHTML = "Not match";
+		confirmedPasswordError.innerHTML = "Passwords aren't equal";
 		result = false;
 	}
 	
@@ -70,7 +70,7 @@ function validate() {
 	phoneNumberError.innerHTML = "";
 	if ( phoneNumber.value.length > 0 && phoneNumber.value.length < 9) {
 		phoneNumber.focus();
-		phoneNumberError.innerHTML = "Incorrect phone number";
+		phoneNumberError.innerHTML = "Incorrect phone number (should be 9 digits)";
 		result = false;
 	}
 	

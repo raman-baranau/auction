@@ -3,8 +3,10 @@
 <html>
   <head>
     <title>Login</title>
+    <link rel="shortcut icon" href="../images/logo.png" type="image/png">
     <link rel="stylesheet" type="text/css" href="../css/header.css">
-    <link rel="stylesheet" type="text/css" href="../css/sign_up_form.css">
+    <link rel="stylesheet" type="text/css" href="../css/footer.css">
+    <link rel="stylesheet" type="text/css" href="../css/sign_in_form.css">
   </head>
   <body>
     <c:import url="/jsp/fragment/header.jsp"></c:import>
@@ -13,23 +15,21 @@
         <input type="hidden" name="command" value="login" />
         <h1>Sign In</h1>
         <p>Please fill in this form to sign in your account.</p>
-        <hr>
+        <hr class="line">
         
-		<label><b>Login</b></label>
-	    <input type="text" name="login" value="" placeholder="Enter your login here"/>
+        <h5 class="error">${errorLoginPassMessage}</h5>
+		    <label><b>Login</b></label>
+	      <input type="text" name="login" value="" placeholder="Enter your login here"/>
 	
-	    <label><b>Password</b></label>
-	    <input type="password" name="password" value="" placeholder="Enter password"/>
+	      <label><b>Password</b></label>
+	      <input type="password" name="password" value="" placeholder="Enter password"/>
 	    
-		<a href="register.jsp">Not registered yet? Register now!</a>
-  			${errorLoginPassMessage}
-		<br/>
-		 ${wrongAction}
-		<br/>
-		 ${nullPage}
-		<br/>
-		<input type="submit" value="Submit"/>
+		    <a href="register.jsp">Not registered yet? Register now!</a>
+  			
+		
+		    <input type="submit" class="signinbtn" value="Sign in"/>
       </div>
     </form>
+    <c:import url="/jsp/fragment/footer.jsp"></c:import>
   </body>
 </html>

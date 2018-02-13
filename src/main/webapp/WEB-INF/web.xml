@@ -16,8 +16,11 @@
 	<error-page>
 	  	<exception-type>java.lang.RuntimeException</exception-type>
 	  	<location>/jsp/error/error.jsp</location>
-  	</error-page>
-  	<listener>
-    	<listener-class>by.baranau.auction.listener.UserSessionListener</listener-class>
-	</listener>
+ 	</error-page>
+ 	<listener>
+   	<listener-class>by.baranau.auction.listener.UserSessionListener</listener-class>
+  </listener>
+  <listener>
+    <listener-class>by.baranau.auction.listener.ApplicationContextListener</listener-class>
+  </listener>
 </web-app>

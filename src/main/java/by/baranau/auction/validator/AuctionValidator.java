@@ -35,7 +35,7 @@ public class AuctionValidator {
 			+ "[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\z";
 	
 	public final static String PATTERN_PHONE_NUMBER =
-			"";
+			"[\\d]{9}";
 	
 	private final static int LOT_NAME_LENGTH = 40;
 	
@@ -75,7 +75,15 @@ public class AuctionValidator {
 				&& iHours < 24;
 	}
 	
-	private boolean validatePassword(String password, String confirmed_password) {
+	public boolean validatePhoneNumber(String phoneNumber) {
+	    return Pattern.matches(PATTERN_PHONE_NUMBER, phoneNumber);
+	}
+	
+	public boolean validateEmail(String email) {
+	    return Pattern.matches(PATTERN_EMAIL, email);
+	}
+	
+	public boolean validatePassword(String password, String confirmed_password) {
 		return (validatePassword(password) && password.equals(confirmed_password));
 	}
 	

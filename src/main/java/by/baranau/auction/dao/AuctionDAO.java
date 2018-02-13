@@ -1,5 +1,6 @@
 package by.baranau.auction.dao;
 
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,6 +10,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import by.baranau.auction.data.Auction;
 import by.baranau.auction.data.AuctionType;
 import by.baranau.auction.data.User;
@@ -17,6 +22,8 @@ import by.baranau.auction.pool.ProxyConnection;
 
 public class AuctionDAO extends AbstractDAO<Integer, Auction> {
 	
+    private static final Logger LOGGER = LogManager.getLogger(AuctionDAO.class);
+    
 	private static final String SQL_CREATE_AUCTION = 
 			"INSERT INTO AUCTIONS VALUES(NULL, ?, ?, ?, ?, ?, NULL, NULL, ?, ?)";
 	
@@ -39,7 +46,7 @@ public class AuctionDAO extends AbstractDAO<Integer, Auction> {
             + "WHERE OWNER_ID=?";
 	
 	private static final String SQL_SELECT_BID_OPTIONS =
-	        "SELECT SELLING_PRICE, CLIENT_ID "
+	        "SELECT INITIAL_PRICE, SELLING_PRICE, CLIENT_ID, END_DATE "
 	        + "FROM AUCTIONS "
 	        + "WHERE AUCTION_ID=? "
 	        + "FOR UPDATE";
@@ -68,14 +75,12 @@ public class AuctionDAO extends AbstractDAO<Integer, Auction> {
 			ResultSet resultSet = st.executeQuery();
 			buildAuctionsList(resultSet, auctions);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.log(Level.ERROR, "Error occured while finding all auctions", e);
 		} finally {
 			try {
 				st.close();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			    LOGGER.log(Level.ERROR, "Error occured while closing statement", e);
 			}
 		}
 		return auctions;
@@ -91,14 +96,12 @@ public class AuctionDAO extends AbstractDAO<Integer, Auction> {
 	        ResultSet resultSet = statement.executeQuery();
 	        buildAuctionsList(resultSet, auctions);
 	    } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+	        LOGGER.log(Level.ERROR, "Error occured finding auctions", e);
         } finally {
 	        try {
                 statement.close();
             } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                LOGGER.log(Level.ERROR, "Error occured while closing statement", e);
             }
 	    }
 	    return auctions;
@@ -135,13 +138,12 @@ public class AuctionDAO extends AbstractDAO<Integer, Auction> {
             auction.setOwner(owner);
 			auction.setAuctionType(AuctionType.valueOf(resultSet.getString(10)));
 		} catch (SQLException e) {
-			
+		    LOGGER.log(Level.ERROR, "Error occured while executing query", e);
 		} finally {
 			try {
 				st.close();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			    LOGGER.log(Level.ERROR, "Error occured while closing statement", e);
 			}
 		}
 		return auction;
@@ -157,14 +159,12 @@ public class AuctionDAO extends AbstractDAO<Integer, Auction> {
 			st.setInt(1, id);
 			result = (st.executeUpdate() > 0) ? true : false;
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.log(Level.ERROR, "Error occured while executing query", e);
 		} finally {
 			try {
 				st.close();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			    LOGGER.log(Level.ERROR, "Error occured while closing statement", e);
 			}
 		}
 		return result;
@@ -172,8 +172,7 @@ public class AuctionDAO extends AbstractDAO<Integer, Auction> {
 
 	@Override
 	public boolean delete(Auction entity) {
-		// TODO Auto-generated method stub
-		return false;
+		return delete(entity.getId());
 	}
 
 	@Override
@@ -192,14 +191,12 @@ public class AuctionDAO extends AbstractDAO<Integer, Auction> {
 			st.setString(7, entity.getAuctionType().toString());
 			st.executeUpdate();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		    LOGGER.log(Level.ERROR, "Error occured while executing query", e);
 		} finally {
 			try {
 				st.close();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			    LOGGER.log(Level.ERROR, "Error occured while closing statement", e);
 			}
 		}
 				
@@ -207,9 +204,8 @@ public class AuctionDAO extends AbstractDAO<Integer, Auction> {
 	}
 
 	@Override
-	public Auction update(Auction entity) {
-		// TODO Auto-generated method stub
-		return null;
+	public void update(Auction entity) {
+		throw new UnsupportedOperationException("Operation is not supported yet");
 	}
 	
 	public boolean makeBid(double bidValue, int clientId, int auctionId) {
@@ -224,45 +220,49 @@ public class AuctionDAO extends AbstractDAO<Integer, Auction> {
 	        statement.setInt(1, auctionId);
 	        ResultSet resultSet = statement.executeQuery();
 	        resultSet.next();
+	        double initialPrice = resultSet.getDouble("INITIAL_PRICE");
 	        double lastBid = resultSet.getDouble("SELLING_PRICE");
 	        int oldClientId = resultSet.getInt("CLIENT_ID");
-	        
+	        LocalDateTime endDate = LocalDateTime.ofInstant(
+	                resultSet.getTimestamp("END_DATE").toInstant(),
+                    ZoneId.systemDefault()
+                    );
 	        if (clientId == oldClientId) {
 	            return false;
 	        }
 	        
 	        updateStatement = connection.prepareStatement(SQL_AUCTIONS_MAKE_BID);
-	        if (bidValue > lastBid) {
+	        if (bidValue > lastBid 
+	                && bidValue > initialPrice 
+	                && LocalDateTime.now().isBefore(endDate)) {
 	            updateStatement.setDouble(1, bidValue);
 	            updateStatement.setInt(2, clientId);
 	            updateStatement.setInt(3, auctionId);
 	            updateStatement.executeUpdate();
+	            result = true;
 	        }
 	        connection.commit();
 	    } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+	        LOGGER.log(Level.ERROR, "Error occured while executing query", e);
         } finally {
 	        try {
                 connection.setAutoCommit(true);
             } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                LOGGER.log(Level.ERROR, "Error occured while setting connection autocommit to true", e);
             }
 	        try {
                 statement.close();
             } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                LOGGER.log(Level.ERROR, "Error occured while closing statement", e);
             }
 	        try {
-                updateStatement.close();
+	            if (updateStatement != null) {
+	                updateStatement.close();
+	            }
             } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                LOGGER.log(Level.ERROR, "Error occured while closing statement", e);
             }
 	    }
-	    
 	    return result;
 	}
 	

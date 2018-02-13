@@ -9,30 +9,31 @@ public class ShowProfileCommand implements ActionCommand {
     
     private AccountReceiver receiver = new AccountReceiver(); 
     
-    @SuppressWarnings("unused")
     @Override
     public String execute(SessionRequestContent request) {
         
         User user = null;
         
-        if (request.getParameter("userId") != null) {
-            int userId = Integer.parseInt(request.getParameter("userId")[0]);
+        String[] userIdBuf = request.getParameter("userId");
+        if ( userIdBuf != null ) {
+            int userId = Integer.parseInt(userIdBuf[0]);
             user = receiver.findUserById(userId);
-        } else {
+        } else if ( request.getSessionAttribute("user") != null ){
             user = (User) request.getSessionAttribute("user");
+        } else {
+            return ConfigurationManager.getProperty("path.page.login");
         }
         
-        int count = receiver.findLotCount(user.getId()); 
-                
         String page = null;
         if (user != null) {
+            int count = receiver.findLotCount(user.getId()); 
             request.setRequestAttribute("lot_count", count);
             request.setRequestAttribute("client", user);
             page = ConfigurationManager.getProperty("path.page.user.profile");
         } else {
             request.setRequestAttribute("profileNotFound", 
                     MessageManager.getProperty("message.user.profile_not_found"));
-            page = ConfigurationManager.getProperty("path.page.user.profile_not_found");
+            page = ConfigurationManager.getProperty("path.page.info");
         }
         return page;
     }

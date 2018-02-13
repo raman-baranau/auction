@@ -8,7 +8,8 @@ PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title><c:out value="${ client.login }"/></title>
+    <title><c:out value="${ client.firstName }"/> <c:out value="${ client.lastName }"/></title>
+    <link rel="shortcut icon" href="../images/logo.png" type="image/png">
     <link rel="stylesheet" type="text/css" href="../css/header.css">
     <link rel="stylesheet" type="text/css" href="../css/profile.css">
   </head>
@@ -16,7 +17,7 @@ PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
     <c:import url="/jsp/fragment/header.jsp"></c:import>
     <div class="container">
 	    <h3>
-	      <c:out value="${ client.firstName }"/> 
+	      <c:out value="${ client.firstName }"/>
 	      <c:out value="${ client.lastName }"/>
 	    </h3>
 	    <hr class="line">
@@ -68,8 +69,6 @@ PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 	    <hr class="line">
     </div>
     
-    <script type="text/javascript">
-      <%-- <%@include file="../js/profile.js"%> --%>
-    </script>
+    <c:import url="/jsp/fragment/footer.jsp"></c:import>
   </body>
 </html>

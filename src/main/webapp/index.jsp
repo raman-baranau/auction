@@ -3,6 +3,7 @@
 <html>
 	<head>
 		<title>Index</title>
+		<link rel="shortcut icon" href="../images/logo.png" type="image/png">
 	</head>
 	<body>
 		<c:redirect url="/jsp/controller?command=show_auctions"></c:redirect>

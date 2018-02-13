@@ -18,6 +18,13 @@ public class CreateAuctionCommand implements ActionCommand{
 	
 	public String execute(SessionRequestContent request) {
 		
+	    if (request.getSessionAttribute("user") == null) {
+            request.setRequestAttribute("msgSessionExpired", 
+                    MessageManager.getProperty("message.sessionexpired"));
+            request.invalidateSession();
+            return ConfigurationManager.getProperty("path.page.info");
+        }
+	    
 		String durationDays = request.getParameter(
 		        AuctionConstant.PARAM_NAME_DAYS_DURATION)[0];
 		
@@ -58,7 +65,9 @@ public class CreateAuctionCommand implements ActionCommand{
 			auction.setInitialPrice(Double.parseDouble(initialPrice));
 			
 			receiver.createAuction(auction);
-			page = ConfigurationManager.getProperty("path.page.auctioncreated");
+			request.setRequestAttribute("createSuccess",
+                    MessageManager.getProperty("message.auction.createsuccess"));
+			page = ConfigurationManager.getProperty("path.page.auctioncreate");
 		} else {
 			request.setRequestAttribute("errorValidateAuctionMessage",
 					MessageManager.getProperty("message.incorrectinput"));

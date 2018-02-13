@@ -8,16 +8,19 @@ PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Insert title here</title>
+    <title>List of auctions</title>
+    <link rel="shortcut icon" href="../images/logo.png" type="image/png">
     <link rel="stylesheet" type="text/css" href="../css/header.css">
+    <link rel="stylesheet" type="text/css" href="../css/footer.css">
     <link rel="stylesheet" type="text/css" href="../css/auction_list.css">
   </head>
   <body>
     <c:import url="/jsp/fragment/header.jsp"></c:import>
 		<h3><c:out value="${ emptyAuctionList }"/></h3>
-		<h2>Auction list</h2>
-		<hr>
+		
 		<div class="container">
+			<h2>Auction list</h2>
+	    <hr>
 			<c:forEach var="auction" items="${auctions}" varStatus="status">
 				<div class="lot-info">
 				  <ul>
@@ -29,11 +32,12 @@ PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 						<li>
 						  <a href="controller?command=show_auction&auctionId=${ auction.id }">
 				         More info
-				       </a>
+				      </a>
 					  </li>
 				  </ul>
 				</div>
 			</c:forEach>
     </div>
+    <c:import url="/jsp/fragment/footer.jsp"></c:import>
   </body>
 </html>

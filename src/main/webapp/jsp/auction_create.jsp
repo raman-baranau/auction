@@ -5,7 +5,9 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Create new lot</title>
+    <link rel="shortcut icon" href="../images/logo.png" type="image/png">
     <link rel="stylesheet" type="text/css" href="../css/header.css">
+    <link rel="stylesheet" type="text/css" href="../css/footer.css">
     <link rel="stylesheet" type="text/css" href="../css/create_auction.css">
   </head>
   <body>
@@ -14,7 +16,10 @@
       <div class="container"> 
         <input type="hidden" name="command" value="create_auction" />
         <hr class="line">
-      
+        
+        <div class="error">${ errorValidateAuctionMessage }</div>
+        <div class="success">${ createSuccess }</div>
+        
 	      <label><b>Lot name<span class="required">*</span></b></label>
 	      <input type="text" name="lotName" value="" placeholder="Enter lot name"/>
 	      <p class="error" id="lotNameError"></p><br/>
@@ -42,7 +47,7 @@
                  placeholder="Days (1-14)"/>
           <input type="text" 
                  name="hoursDuration" 
-                 value=""
+                 value="0"
                  onkeypress='return isValidDigit();'
                  min="0"
                  max="23"
@@ -54,7 +59,6 @@
 			    <option value="reverse">Reverse</option>
         </select>
 	      
-	      <div>${ errorValidateAuctionMessage }</div>
 	      <p>Fields marked as <span class="required">*</span> are required to fill in.</p>
 	      <p>By creating an auction you agree to our <a href="#">Terms &#38; Privacy.</a></p>
 	      <input type="button" class="cancelbtn" 
@@ -62,6 +66,7 @@
 	      <input type="submit" class="signupbtn" value="Create lot"/>
       </div>
     </form>
+    <c:import url="/jsp/fragment/footer.jsp"></c:import>
     <script type="text/javascript">
       <%@include file="../js/create_lot.js"%>
     </script>

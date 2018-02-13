@@ -3,7 +3,9 @@
 <html>
   <head>
     <title>Sign up</title>
+    <link rel="shortcut icon" href="../images/logo.png" type="image/png">
     <link rel="stylesheet" type="text/css" href="../css/header.css">
+    <link rel="stylesheet" type="text/css" href="../css/footer.css">
     <link rel="stylesheet" type="text/css" href="../css/sign_up_form.css">
   </head>
   <body>
@@ -56,6 +58,7 @@
       </div>
     </form>
     <hr/>
+    <c:import url="/jsp/fragment/footer.jsp"></c:import>
     <script type="text/javascript">
       <%@include file="../js/sign_up_form_validation.js"%>
     </script>

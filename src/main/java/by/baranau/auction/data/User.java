@@ -2,14 +2,9 @@ package by.baranau.auction.data;
 
 public class User extends Entity {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
-	private int id;
+    private int id;
 	private String login;
-	private byte[] password;
+	private String password;
 	private String firstName;
 	private String lastName;
 	private String email;
@@ -32,14 +27,14 @@ public class User extends Entity {
 		this.login = login;
 	}
 	
-	public byte[] getPassword() {
+	public String getPassword() {
 		return password;
 	}
 	
 	public void setPassword(String password) {
-		this.password = password.getBytes();
+		this.password = password;
 	}
-
+	
 	public String getFirstName() {
 		return firstName;
 	}

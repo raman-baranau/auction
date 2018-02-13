@@ -8,14 +8,16 @@ PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Insert title here</title>
+    <title><c:out value="${ auction.lotName}" /></title>
+    <link rel="shortcut icon" href="../images/logo.png" type="image/png">
     <link rel="stylesheet" type="text/css" href="../css/header.css">
+    <link rel="stylesheet" type="text/css" href="../css/footer.css">
     <link rel="stylesheet" type="text/css" href="../css/auction_info.css">
   </head>
   <body>
     <c:import url="/jsp/fragment/header.jsp"></c:import>
     <h3><c:out value="${ errorFindAuctionMessage }"/></h3>
-    <c:if test="${not empty auction }">
+    <c:if test="${ not empty auction }">
       <div class="lot-info" id="info">
 	      <ul>
 	        <li><img src=""/></li>
@@ -31,6 +33,12 @@ PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
               <div class="info-value"><c:out value="${ auction.lotDescription}" /></div>
             </div>
 	        </li>
+	        <li>
+            <div class="info-block">
+              <div class="info-name">Auction type</div>
+              <div class="info-value"><c:out value="${ auction.auctionType}" /></div>
+            </div>
+          </li>
 	        <li>
             <div class="info-block">
                 <div class="info-name">Lot owner</div>
@@ -61,7 +69,7 @@ PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
               <div class="info-value"><c:out value="${ auction.sellingPrice}" /></div>
             </div>
 	        </li>
-	        <c:if test="${not empty auction.client }">
+	        <c:if test="${ not empty auction.client }">
 	          <li>
 	            <div class="info-block">
                 <div class="info-name">Last bid owner</div>
@@ -70,7 +78,7 @@ PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 	          </li>
 	        </c:if>
 	        <li>
-	          <c:if test="${ auction.owner.id != user.id }">
+	          <c:if test="${ auction.owner.id != user.id && role != 'GUEST'}">
 	            <div class="info-block">
                 <form name="paramForm" action="controller" method="POST">
 	                <input type="hidden" name="command" value="place_bid" />
@@ -97,6 +105,7 @@ PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 	      </ul>
 	    </div>
     </c:if>
+    <c:import url="/jsp/fragment/footer.jsp"></c:import>
     <script type="text/javascript">
       <%@include file="../js/auction_info.js"%>
     </script>

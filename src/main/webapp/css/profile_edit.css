@@ -1,5 +1,7 @@
-body {
-	font-family: Arial;
+
+.container {
+    padding: 0 30%;
+    font-family: Arial;
 }
 
 input[type=text], input[type=password] {
@@ -8,11 +10,7 @@ input[type=text], input[type=password] {
     display: inline-block;
     border: none;
     background: #f1f1f1;
-    margin: 7px 0;
-}
-
-.error {
-	margin: 0px 0;
+    margin: 6px 0;
 }
 
 input[type=text]:focus, input[type=password]:focus {
@@ -20,12 +18,22 @@ input[type=text]:focus, input[type=password]:focus {
     outline: none;
 }
 
+.error {
+  margin: 1px 0;
+  color: red;
+  display: none;
+}
+
+.visible {
+	display: inline-block;
+}
+
 .line {
     border: 1px solid #f1f1f1;
     margin-bottom: 25px;
 }
 
-.cancelbtn, .signupbtn {
+.editbtn {
     background-color: #4CAF50;
     color: white;
     padding: 14px 20px;
@@ -36,23 +44,18 @@ input[type=text]:focus, input[type=password]:focus {
     opacity: 0.9;
 }
 
-.cancelbtn:hover, .signupbtn:hover {
-    opacity:1;
+.editbtn:hover {
+    opacity: 1;
 }
 
-.cancelbtn {
-    background-color: #f44336;
+.msg {
+	text-align: center;
 }
 
-.cancelbtn, .signupbtn {
-  float: left;
-  width: 50%;
+.success {
+	color: #4CAF50;
 }
 
-.container {
-    padding: 0 30% 30% 30%;
-}
-
-.error, .required {
+.error-msg {
 	color: red;
 }

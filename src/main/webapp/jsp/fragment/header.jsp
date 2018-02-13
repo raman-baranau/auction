@@ -16,14 +16,14 @@
       <li style="float:right"><a href="login.jsp">Sign in</a></li>
     </c:when>
     <c:otherwise>
-     <li class="signout">
-          <form name="signOutForm" method="POST" action="controller">
-            <input type="hidden" name="command" value="logout" />
-            <input type="submit" class="signoutbtn" value="Sign out"/>
-          </form>
+      <li class="signout">
+	      <form name="signOutForm" method="POST" action="controller">
+	        <input type="hidden" name="command" value="logout" />
+	        <input type="submit" class="signoutbtn" value="Sign out"/>
+	      </form>
       </li>
       <li class="dropdown">
-        <a href="#" class="dropbtn">Hello, ${ user.firstName }</a>
+        <a href="controller?command=show_profile" class="dropbtn">Hello, ${ user.firstName }</a>
         <div class="dropdown-content">
           <a href="controller?command=show_profile">My profile</a>
           <c:choose>
@@ -31,12 +31,12 @@
               <a href="controller?command=show_auctions&ownerId=${ user.id }">
                 My lots
               </a>
+              <a href="profile_edit.jsp">My settings</a>
               <a href="auction_create.jsp">Create lot</a>
             </c:when>
           </c:choose>
         </div>
       </li>
-     
     </c:otherwise>
   </c:choose>
 </ul>

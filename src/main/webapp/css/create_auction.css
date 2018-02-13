@@ -4,7 +4,7 @@ body {
 }
 
 .container {
-  padding: 0 30% 30% 30%;
+  padding: 0 30%;
 }
 
 .container input, .container textarea {
@@ -12,12 +12,12 @@ body {
 }
 
 input[type=text], input[type=password], textarea {
-    width: 100%;
-    padding: 15px;
-    display: inline-block;
-    border: none;
-    background: #f1f1f1;
-    margin: 7px 0;
+  width: 100%;
+  padding: 15px;
+  display: inline-block;
+  border: none;
+  background: #f1f1f1;
+  margin: 7px 0;
 }
 
 .duration input {
@@ -31,8 +31,8 @@ input[type=text], input[type=password], textarea {
 }
 
 .line {
-    border: 1px solid #f1f1f1;
-    margin-bottom: 25px;
+  border: 1px solid #f1f1f1;
+  margin-bottom: 25px;
 }
 
 .error {
@@ -40,8 +40,8 @@ input[type=text], input[type=password], textarea {
 }
 
 input[type=text]:focus, input[type=password]:focus {
-    background-color: #ddd;
-    outline: none;
+  background-color: #ddd;
+  outline: none;
 }
 
 .error, .required {
@@ -49,23 +49,23 @@ input[type=text]:focus, input[type=password]:focus {
 }
 
 .cancelbtn, .signupbtn {
-    background-color: #4CAF50;
-    color: white;
-    padding: 14px 20px;
-    margin: 8px 0;
-    border: none;
-    cursor: pointer;
-    width: 100%;
-    opacity: 0.9;
+	background-color: #4CAF50;
+	color: white;
+	padding: 14px 20px;
+	margin: 8px 0;
+	border: none;
+	cursor: pointer;
+	width: 100%;
+	opacity: 0.9;
 }
 
 .cancelbtn:hover, .signupbtn:hover {
-    opacity:1;
+  opacity:1;
 }
 
 .cancelbtn {
-    padding: 14px 20px;
-    background-color: #f44336;
+  padding: 14px 20px;
+  background-color: #f44336;
 }
 
 .cancelbtn, .signupbtn {
@@ -82,9 +82,18 @@ textarea[name="lotDescription"] {
 }
 
 textarea[name="lotDescription"]:focus {
-    outline: none;
+  outline: none;
 }
 
 select [name="auctionType"] {
 	width: 100%; 
+}
+
+.success, .error {
+	font-size: 20px;
+	margin-bottom: 5px;
+}
+
+.success {
+	color: #4CAF50;
 }
